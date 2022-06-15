@@ -1,26 +1,27 @@
+from ctypes import Union
 from random import randint
 from types import NoneType
-from typing import List, Union
-from dao.PostDAO import PostDAO
-from models.Post import Post
+from typing import List
+from dao.CommentDAO import CommentDAO
+from models.Comment import Comment
 
-class PostService:
+class CommentService:
     
-    def __init__(self, post_dao: PostDAO) -> None:
-        self.post_dao = post_dao
+    def __init__(self, comment_dao: CommentDAO) -> None:
+        self.comment_dao = comment_dao
 
-    def create(self, post: Post) -> bool:
+    def create(self, comment: Comment) -> bool:
         try:
-            post.id = randint(0, 1000000)
-            self.post_dao.create(post)
+            comment.id = randint(0, 1000000)
+            self.comment_dao.create(comment)
             return True
         except Exception:
             print("Error in PostService : Create")
             return False
 
-    def update(self, post: Post) -> bool:
+    def update(self, comment: Comment) -> bool:
         try:
-            self.post_dao.update(post)
+            self.comment_dao.update(comment)
             return True
         except Exception:
             print("Error in PostService : Update")
@@ -28,22 +29,22 @@ class PostService:
 
     def delete(self, id: int) -> bool:
         try:
-            self.post_dao.delete(id)
+            self.comment_dao.delete(id)
             return True
         except Exception:
             print("Error in PostService : Delete")
             return False
 
-    def get_by_id(self, id: int) -> Union[Post, NoneType]:
+    def get_by_id(self, id: int) -> Union[Comment, NoneType]:
         try:
-            return self.post_dao.get_by_id(id)
+            return self.comment_dao.get_by_id(id)
         except Exception:
             print("Error in PostService : Get All")
             return None
 
-    def get_all(self) -> Union[List[Post], NoneType]:
+    def get_all(self) -> Union[List[Comment], NoneType]:
         try:
-            return self.post_dao.get_all()
+            return self.comment_dao.get_all()
         except Exception:
             print("Error in PostService : Get All")
             return None
