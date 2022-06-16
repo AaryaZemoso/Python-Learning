@@ -1,5 +1,4 @@
 from random import randint
-from types import NoneType
 from typing import List, Union
 from dao.PostDAO import PostDAO
 from models.Post import Post
@@ -34,16 +33,17 @@ class PostService:
             print("Error in PostService : Delete")
             return False
 
-    def get_by_id(self, id: int) -> Union[Post, NoneType]:
+    def get_by_id(self, id: int) -> Union[Post, None]:
         try:
             return self.post_dao.get_by_id(id)
         except Exception:
             print("Error in PostService : Get All")
             return None
 
-    def get_all(self) -> Union[List[Post], NoneType]:
+    def get_all(self) -> Union[List[Post], None]:
         try:
             return self.post_dao.get_all()
-        except Exception:
+        except Exception as e:
+            print(e)
             print("Error in PostService : Get All")
             return None

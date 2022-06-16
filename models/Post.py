@@ -10,3 +10,10 @@ class Post:
 
     def __str__(self) -> str:
         return f"Post[id = {self.id}, title = {self.title}, content = {self.content}]"
+    
+    def json(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content
+        }

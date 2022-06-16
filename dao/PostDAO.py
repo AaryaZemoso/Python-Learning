@@ -18,6 +18,7 @@ class PostDAO:
         
         self.connection = connection
         self.cursor = connection.cursor()
+        self.cursor.execute(self.CREATE_TABLE_QUERY)
 
 
     def create(self, post: Post):
@@ -38,7 +39,7 @@ class PostDAO:
         self.cursor.execute(self.DELETE_QUERY, (id, ))
 
     def get_by_id(self, id: int) -> Post:
-        self.cursor.execute(self.GET_BY_ID_QUERY, (id, ))
+        return Post(*next(self.cursor.execute(self.GET_BY_ID_QUERY, (id, ))))
 
     def get_all(self) -> List[Post]:
         list_of_posts = self.cursor.execute(self.GET_ALL_QUERY)
