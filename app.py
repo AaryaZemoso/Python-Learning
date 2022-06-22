@@ -1,38 +1,51 @@
+from flask import Flask
+from flask_jwt import JWT
+from flask_restful import Api
+from flask_jwt_extended.jwt_manager import JWTManager
+
 import sqlite3
-from dao.CommentDAO import CommentDAO
-from dao.PostDAO import PostDAO
-from models.Comment import Comment
-from models.Post import Post
 
-from models.User import User
+from properties import JWT_SECRET
+
 from dao.UserDAO import UserDAO
+from dao.PostDAO import PostDAO
+from dao.CommentDAO import CommentDAO
 
-database_connection_string = "database/data.db"
+from services.AuthService import AuthService
+from services.PostService import PostService
+from services.CommentService import CommentService
 
-connection = sqlite3.connect(database_connection_string)
+from routes.PostRoute import PostRoute, PostIDRoute
+from routes.CommentRoute import CommentIDRoute, CommentRoute
 
-# user_dao = UserDAO(connection)
-comment_dao = CommentDAO(connection)
-post_dao = PostDAO(connection, comment_dao)
-# user_dao.reset_table()
-# user_dao.create(User(1, "Aarya", "Devarla"))
-# user_dao.update(User(2, "Luffy", "Meat"))
-# for user in user_dao.get_all():
-    # print(user)
-# user_dao.delete(1)
-# print(user_dao.get_by_id(1))
+if __name__ == "__main__":
+    
+    database_connection_string = "database/data.db"
 
-# post_dao.reset_table()
-# post_dao.create(Post(2, "Second post", "Already Bored", None))
-for post in post_dao.get_all():
-    print(post)
-    print("Comments : ", post.comments)
+    app = Flask(__name__)
+    api = Api(app)
+   
+    db_connection = sqlite3.connect(database_connection_string, check_same_thread = False)
 
-# comment_dao.reset_table()
-# comment_dao.create(1, Comment(1, "Whoa!!! Nice"))
-# for comment in comment_dao.get_by_post_id(1):
-    # print(comment)
+    app.config['PROPAGATE_EXCEPTIONS'] = True
+    app.secret_key = JWT_SECRET
 
-connection.commit()
-connection.close()
+    user_dao = UserDAO(db_connection)
+    post_dao = PostDAO(db_connection)
+    comment_dao = CommentDAO(db_connection)
+    
+    post_service = PostService(post_dao)
+    auth_service = AuthService(user_dao)
+    comment_service = CommentService(comment_dao)
 
+    jwt = JWT(app, auth_service.authenticate, auth_service.identity)
+
+    api.add_resource(PostRoute, "/posts", resource_class_args = (post_service, ))
+    api.add_resource(PostIDRoute, "/posts/<int:id>", resource_class_args = (post_service, ))
+    api.add_resource(CommentRoute, "/posts/<int:post_id>/comments", resource_class_args = (comment_service, ))
+    api.add_resource(CommentIDRoute, "/posts/<int:post_id>/comments/<int:comment_id>", resource_class_args = (comment_service, ))
+
+    app.run(port = 8011)
+
+    db_connection.commit()
+    db_connection.close()

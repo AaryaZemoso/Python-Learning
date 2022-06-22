@@ -13,6 +13,7 @@ class UserDAO:
     DELETE_QUERY = "DELETE FROM users WHERE id = ?"
     GET_BY_ID_QUERY = "SELECT * FROM users WHERE id = ?"
     GET_ALL_QUERY = "SELECT * FROM users"
+    GET_BY_USERNAME_AND_PASSWORD_QUERY = "SELECT * FROM users WHERE name = ? AND password = ?"
 
     def __init__(self, connection: sqlite3.Connection) -> None:
         self.connection = connection
@@ -34,6 +35,13 @@ class UserDAO:
     def get_by_id(self, _id) -> User:
         try:
             user = next(self.cursor.execute(self.GET_BY_ID_QUERY, (_id, )))
+            return User(*user)
+        except StopIteration:
+            return None
+
+    def user_exists(self, username: str, password: str) -> User:
+        try:
+            user = next(self.cursor.execute(self.GET_BY_USERNAME_AND_PASSWORD_QUERY, (username, password)))
             return User(*user)
         except StopIteration:
             return None

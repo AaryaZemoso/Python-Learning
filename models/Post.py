@@ -1,17 +1,19 @@
-from typing import List
-from models.Comment import Comment
-
-
 class Post:
 
-    def __init__(self, _id: int, title: str, content: str, comments: List[Comment]) -> None:
-        self._id = _id
+    def __init__(self, _id: int, title: str, content: str) -> None:
+        self.id = _id
         self.title = title
         self.content = content
-        self.comments = comments
 
     def __repr__(self) -> str:
-        return f"<Post id={self._id}>"
+        return f"<Post id={self.id}>"
 
     def __str__(self) -> str:
-        return f"Post[id = {self._id}, title = {self.title}, content = {self.content}]"
+        return f"Post[id = {self.id}, title = {self.title}, content = {self.content}]"
+    
+    def json(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content
+        }

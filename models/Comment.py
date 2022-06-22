@@ -9,3 +9,9 @@ class Comment:
 
     def __str__(self) -> str:
         return f"Comment[id = {self.id}, content = {self.content}]"
+    
+    def json(self) -> dict:
+        return {
+            "id": self.id,
+            "content": self.content
+        }
