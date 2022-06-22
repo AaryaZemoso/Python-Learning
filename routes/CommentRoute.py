@@ -1,5 +1,7 @@
 from flask import jsonify, make_response, request
+from flask_jwt import jwt_required
 from flask_restful import Resource
+
 from models.Comment import Comment
 
 from services.CommentService import CommentService
@@ -11,9 +13,11 @@ class CommentIDRoute(Resource):
         super().__init__()
         self.service = service
 
+    @jwt_required()
     def get(self, post_id: int, comment_id: int):
         return jsonify(self.service.get_by_id(post_id, comment_id).json())
 
+    @jwt_required()
     def put(self, post_id: int, comment_id: int):
         data = request.get_json()
         try:
@@ -30,6 +34,7 @@ class CommentIDRoute(Resource):
                 'message': 'bad request'
             }), 400)
 
+    @jwt_required()
     def delete(self, post_id: int, comment_id: int):
         if self.service.delete(post_id, comment_id):
             return jsonify({
@@ -46,6 +51,7 @@ class CommentRoute(Resource):
         super().__init__()
         self.service = service
 
+    @jwt_required()
     def post(self, post_id: int):
         data = request.get_json()
         try:
@@ -63,6 +69,7 @@ class CommentRoute(Resource):
                 "message": "error parsing the body"
             }), 400)
 
+    @jwt_required()
     def get(self, post_id: int):
         list_of_comments = self.service.get_all(post_id)
         if list_of_comments:
